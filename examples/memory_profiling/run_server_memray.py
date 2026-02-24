@@ -37,7 +37,8 @@ def run_server_with_profiling(
         # Load server configuration
         server_agent_config = OmegaConf.load(config_path)
         server_agent_config.server_configs.num_clients = num_clients
-        server_agent_config.client_configs.model_configs.model_kwargs.model_name = model_name
+        if hasattr(server_agent_config.client_configs.model_configs, "model_kwargs"):
+            server_agent_config.client_configs.model_configs.model_kwargs.model_name = model_name
 
         # Modify config to use optimizations if using optimized version
         if use_optimized:

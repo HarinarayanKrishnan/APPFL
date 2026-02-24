@@ -58,6 +58,8 @@ run_llm_experiment() {
         wait "$PID"
     done
 
+    sleep 30 # Ensure server has time to finish processing
+
     echo "Stopping $VERSION server..."
     kill "$SERVER_PID" 2>/dev/null || true
 
