@@ -2,6 +2,19 @@
 
 To further optimize memory usage during federated learning with large models, we have implemented chunked model transmission and aggregation. This approach breaks down large model parameters into smaller chunks, reducing peak memory consumption on both the server and client sides.
 
+## 📁 Files Overview
+
+| File | Description |
+|------|-------------|
+| `run_server_memray.py` | Memory profiling wrapper for the gRPC server |
+| `run_client_memray.py` | Memory profiling wrapper for gRPC clients |
+| `run_llm_experiment.sh` | LLM memory profiling experiment script |
+| `run_resnet_experiment.sh` | ResNet memory profiling experiment script |
+| `analyze_profiles.py` | Automatic analysis script for memory profiles |
+| `dummy_cifar10_dataset.py` | Lightweight dummy dataset for training memory isolation |
+| `batch_submission_large.sh` | PBS batch submission script for multi-node 70B experiments |
+| `configs/` | Configuration files for LLM and ResNet experiments |
+
 ## 🔨 0. Installation
 
 To run the memory profiling experiments, you need to install the required dependencies, including memray for memory profiling and any additional dependencies for the specific models you want to test (e.g., `transformers` for LLMs).
@@ -198,19 +211,6 @@ Server Memory Usage (Peak: 309.8GB)
 
 Client Memory Usage (Peak: 302.6GB)
 ![alt text](client-mem.png)
-
-## 📁 Files Overview
-
-| File | Description |
-|------|-------------|
-| `run_server_memray.py` | Memory profiling wrapper for the gRPC server |
-| `run_client_memray.py` | Memory profiling wrapper for gRPC clients |
-| `run_llm_experiment.sh` | LLM memory profiling experiment script |
-| `run_resnet_experiment.sh` | ResNet memory profiling experiment script |
-| `analyze_profiles.py` | Automatic analysis script for memory profiles |
-| `dummy_cifar10_dataset.py` | Lightweight dummy dataset for training memory isolation |
-| `batch_submission_large.sh` | PBS batch submission script for multi-node 70B experiments |
-| `configs/` | Configuration files for LLM and ResNet experiments |
 
 ## 🔍 Viewing Memory Profiles
 

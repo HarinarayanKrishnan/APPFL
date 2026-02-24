@@ -18,6 +18,7 @@ client_configs:
     # Differential privacy
     use_dp: False
     epsilon: 1
+    # Mini-batch gradient clipping
     clip_grad: False
     clip_value: 1
     clip_norm: 1
