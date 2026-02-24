@@ -58,11 +58,16 @@ class SyncScheduler(BaseScheduler):
 
             if len(self.local_models) == self.num_clients:
                 is_final_chunk = True
-                if "_chunk_idx" in self.aggregation_kwargs and "_total_chunks" in self.aggregation_kwargs:
+                if (
+                    "_chunk_idx" in self.aggregation_kwargs
+                    and "_total_chunks" in self.aggregation_kwargs
+                ):
                     # Extract from first client (all should be same)
                     chunk_idx = list(self.aggregation_kwargs["_chunk_idx"].values())[0]
-                    total_chunks = list(self.aggregation_kwargs["_total_chunks"].values())[0]
-                    is_final_chunk = (chunk_idx == total_chunks - 1)
+                    total_chunks = list(
+                        self.aggregation_kwargs["_total_chunks"].values()
+                    )[0]
+                    is_final_chunk = chunk_idx == total_chunks - 1
 
                 # Memory optimization: Process aggregation with cleanup
                 if self.optimize_memory:

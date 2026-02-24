@@ -404,7 +404,7 @@ def merge_state_dict_chunks(chunks: list) -> Dict[str, torch.Tensor]:
 
 
 def get_state_dict_memory_info(
-    state_dict: Union[Dict[str, torch.Tensor], "OrderedDict[str, torch.Tensor]"]
+    state_dict: Union[Dict[str, torch.Tensor], "OrderedDict[str, torch.Tensor]"],
 ) -> Dict[str, Any]:
     """
     Get detailed memory information about a state_dict.

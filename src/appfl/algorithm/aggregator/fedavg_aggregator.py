@@ -85,7 +85,9 @@ class FedAvgAggregator(BaseAggregator):
         requested_chunk_id = kwargs.get("_chunk_id", None)
 
         # Handle chunked requests (stateless - client specifies which chunk)
-        if self.model_chunk_size is not None and (request_chunked or requested_chunk_id is not None):  
+        if self.model_chunk_size is not None and (
+            request_chunked or requested_chunk_id is not None
+        ):
             if self.global_state is None:
                 if self.model is not None:
                     param_source = self.model.state_dict()
@@ -94,8 +96,10 @@ class FedAvgAggregator(BaseAggregator):
             else:
                 param_source = self.global_state
             mem_info = get_state_dict_memory_info(param_source)
-            if mem_info['total_bytes'] > self.model_chunk_size:
-                chunks = list(split_state_dict_by_size(param_source, self.model_chunk_size))
+            if mem_info["total_bytes"] > self.model_chunk_size:
+                chunks = list(
+                    split_state_dict_by_size(param_source, self.model_chunk_size)
+                )
                 total_chunks = len(chunks)
                 if requested_chunk_id is not None:
                     chunk_idx = requested_chunk_id
@@ -115,9 +119,9 @@ class FedAvgAggregator(BaseAggregator):
                             chunk_result[k] = param_source[k].clone().detach()
 
                 response_metadata = {
-                    '_chunk_idx': chunk_idx,
-                    '_total_chunks': total_chunks,
-                    '_chunk_keys': chunk_keys
+                    "_chunk_idx": chunk_idx,
+                    "_total_chunks": total_chunks,
+                    "_chunk_keys": chunk_keys,
                 }
 
                 if self.logger:
@@ -152,8 +156,10 @@ class FedAvgAggregator(BaseAggregator):
         Supports streamed aggregation: if _chunk_idx is in kwargs, only aggregates that chunk.
         """
         secure_enabled = self.aggregator_configs.get("use_secure_agg", False)
-        assert not (secure_enabled and "_chunk_idx" in kwargs), "Secure aggregation does not support chunked aggregation yet."
-        
+        assert not (secure_enabled and "_chunk_idx" in kwargs), (
+            "Secure aggregation does not support chunked aggregation yet."
+        )
+
         # Check if this is streamed aggregation
         if "_chunk_idx" in kwargs:
             return self._aggregate_chunk(local_models, **kwargs)
@@ -439,7 +445,9 @@ class FedAvgAggregator(BaseAggregator):
         return clone_state_dict_optimized({k: self.global_state[k] for k in chunk_keys})
 
     def _compute_chunk_steps(
-        self, local_models: Dict[Union[str, int], Union[Dict, OrderedDict]], chunk_keys: list
+        self,
+        local_models: Dict[Union[str, int], Union[Dict, OrderedDict]],
+        chunk_keys: list,
     ):
         """Compute aggregation steps for chunk parameters."""
         with torch.no_grad():

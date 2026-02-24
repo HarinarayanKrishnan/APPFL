@@ -38,7 +38,6 @@ from appfl.misc.memory_utils import (
     optimize_memory_cleanup,
     get_state_dict_memory_info,
     split_state_dict_by_size,
-    merge_state_dict_chunks,
 )
 
 
@@ -81,7 +80,9 @@ class GRPCClientCommunicator:
 
         # Streamed aggregation configuration (works with any transport mechanism)
         self.use_model_chunking = kwargs.get("use_model_chunking", False)
-        self.model_chunk_size = kwargs.get("model_chunk_size", 1 * 1024 * 1024 * 1024)  # 1GB default
+        self.model_chunk_size = kwargs.get(
+            "model_chunk_size", 1 * 1024 * 1024 * 1024
+        )  # 1GB default
 
         channel = create_grpc_channel(
             server_uri,
@@ -164,8 +165,7 @@ class GRPCClientCommunicator:
         if self.optimize_memory:
             # New protocol: metadata and model data are separate
             response, model_bytes = self._receive_metadata_and_model_optimized(
-                self.stub.GetGlobalModel(request, timeout=3600),
-                GetGlobalModelRespone
+                self.stub.GetGlobalModel(request, timeout=3600), GetGlobalModelRespone
             )
 
             if response.header.status == ServerStatus.ERROR:
@@ -232,12 +232,9 @@ class GRPCClientCommunicator:
 
         # Streamed aggregation: Check BEFORE wrapping in ProxyStore/S3/Colab
         # This ensures we chunk the raw model state_dict, not a Proxy or S3 reference
-        if (
-            self.use_model_chunking
-            and isinstance(local_model, (Dict, OrderedDict))
-        ):
+        if self.use_model_chunking and isinstance(local_model, (Dict, OrderedDict)):
             mem_info = get_state_dict_memory_info(local_model)
-            if mem_info['total_bytes'] > self.model_chunk_size:
+            if mem_info["total_bytes"] > self.model_chunk_size:
                 if self.logger:
                     self.logger.info(
                         f"Model size {mem_info['total_mb']:.2f} MB exceeds chunk size "
@@ -288,7 +285,6 @@ class GRPCClientCommunicator:
 
         # Use optimized protocol when optimize_memory is enabled
         if self.optimize_memory:
-
             # Create request with empty local_model (model will be sent separately)
             request = UpdateGlobalModelRequest(
                 header=ClientHeader(client_id=client_id),
@@ -308,7 +304,7 @@ class GRPCClientCommunicator:
             # Receive response using optimized protocol
             response, model_bytes = self._receive_metadata_and_model_optimized(
                 self.stub.UpdateGlobalModel(request_generator, timeout=3600),
-                UpdateGlobalModelResponse
+                UpdateGlobalModelResponse,
             )
 
             if response.header.status == ServerStatus.ERROR:
@@ -371,7 +367,9 @@ class GRPCClientCommunicator:
         """
         total_chunks = first_meta["_total_chunks"]
         if self.logger:
-            self.logger.info(f"GetGlobalModel: Receiving chunked model ({total_chunks} chunks total)")
+            self.logger.info(
+                f"GetGlobalModel: Receiving chunked model ({total_chunks} chunks total)"
+            )
 
         # Incremental merging: start with first chunk instead of collecting all
         model = OrderedDict(first_chunk)
@@ -398,7 +396,9 @@ class GRPCClientCommunicator:
                     chunk_model = result
                     chunk_meta = {}
                 if "_chunk_idx" not in chunk_meta:
-                    raise Exception(f"Expected chunk metadata in response {chunk_id+1}/{total_chunks}")
+                    raise Exception(
+                        f"Expected chunk metadata in response {chunk_id + 1}/{total_chunks}"
+                    )
 
                 # Incremental merge: update model immediately and free chunk memory
                 model.update(chunk_model)
@@ -413,7 +413,9 @@ class GRPCClientCommunicator:
             self.use_model_chunking = old_use_model_chunking
 
         if self.logger:
-            self.logger.info("GetGlobalModel: Completed incremental merge of all chunks")
+            self.logger.info(
+                "GetGlobalModel: Completed incremental merge of all chunks"
+            )
 
         # Clean chunk metadata from response
         for key in ["_chunk_idx", "_total_chunks", "_chunk_keys"]:
@@ -489,7 +491,9 @@ class GRPCClientCommunicator:
                     )
 
             if self.logger:
-                self.logger.info("Chunked aggregation: Completed incremental merge of all chunks")
+                self.logger.info(
+                    "Chunked aggregation: Completed incremental merge of all chunks"
+                )
 
             return global_model, final_metadata
 
@@ -668,7 +672,9 @@ class GRPCClientCommunicator:
         del data_bytes
         gc.collect()
 
-    def _send_request_with_model_optimized(self, request_proto, model_bytes, max_message_size):
+    def _send_request_with_model_optimized(
+        self, request_proto, model_bytes, max_message_size
+    ):
         """
         Send request using optimized protocol: metadata first, then raw model bytes.
         Yields DataBuffer chunks for streaming to server.
@@ -720,16 +726,20 @@ class GRPCClientCommunicator:
         # Parse metadata from first chunk(s)
         response = response_type()
         metadata_size = 0
-        
+
         # Try to parse protobuf from progressively more chunks
-        for i in range(1, min(len(all_chunks) + 1, 10)):  # Metadata should be in first few chunks
+        for i in range(
+            1, min(len(all_chunks) + 1, 10)
+        ):  # Metadata should be in first few chunks
             try:
-                metadata_bytes = b''.join(all_chunks[:i])
+                metadata_bytes = b"".join(all_chunks[:i])
                 response.ParseFromString(metadata_bytes)
                 metadata_size = len(metadata_bytes)
                 break
             except Exception:
-                self.logger.info(f"Metadata parsing failed with first {i} chunks, trying more.")
+                self.logger.info(
+                    f"Metadata parsing failed with first {i} chunks, trying more."
+                )
                 continue
 
         if metadata_size == 0:

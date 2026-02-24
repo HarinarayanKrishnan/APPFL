@@ -20,19 +20,19 @@ from appfl.comm.grpc import GRPCClientCommunicator
 
 
 def run_client_with_profiling(
-    config_path: str, 
-    output_dir: str = "./memory_profiles", 
-    use_optimized: bool = False, 
-    num_clients: int = 1, 
-    client_idx: int = 0, 
-    server_uri: str = "localhost:50051"
+    config_path: str,
+    output_dir: str = "./memory_profiles",
+    use_optimized: bool = False,
+    num_clients: int = 1,
+    client_idx: int = 0,
+    server_uri: str = "localhost:50051",
 ):
     """Run client with memray profiling enabled"""
     os.makedirs(output_dir, exist_ok=True)
 
     # Load config to get client_id
     client_agent_config = OmegaConf.load(config_path)
-    client_id = f"Client{client_idx+1}"
+    client_id = f"Client{client_idx + 1}"
     client_agent_config.client_id = client_id
     client_agent_config.comm_configs.grpc_configs.server_uri = server_uri
     client_agent_config.data_configs.dataset_kwargs.client_id = client_idx
@@ -177,10 +177,10 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     run_client_with_profiling(
-        args.config, 
-        args.output_dir, 
-        args.use_optimized_version, 
-        args.num_clients, 
-        args.client_idx, 
-        args.server_uri
+        args.config,
+        args.output_dir,
+        args.use_optimized_version,
+        args.num_clients,
+        args.client_idx,
+        args.server_uri,
     )

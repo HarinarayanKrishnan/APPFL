@@ -15,6 +15,7 @@ class LLMDummyTrainer(BaseTrainer):
     It loads incoming global parameters directly into the model in-place and
     immediately frees the parameter dictionary to minimize memory overhead.
     """
+
     def __init__(
         self,
         model: Optional[Module] = None,
@@ -23,14 +24,11 @@ class LLMDummyTrainer(BaseTrainer):
     ):
         self.model = model
         self.logger = logger
-        
+
     def get_parameters(self):
         return self.model.state_dict()
-    
-    def load_parameters(
-        self,
-        parameters
-    ):
+
+    def load_parameters(self, parameters):
         """Load model parameters."""
         with torch.no_grad():
             for name, param in self.model.named_parameters():

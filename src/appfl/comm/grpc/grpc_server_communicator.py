@@ -74,7 +74,9 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
             supported_aggregators = [FedAvgAggregator]
             aggregator = server_agent.aggregator
 
-            if not any(isinstance(aggregator, agg_type) for agg_type in supported_aggregators):
+            if not any(
+                isinstance(aggregator, agg_type) for agg_type in supported_aggregators
+            ):
                 supported_names = [agg.__name__ for agg in supported_aggregators]
                 raise ValueError(
                     f"Streamed aggregation (use_model_chunking=True) is only supported with "
@@ -197,7 +199,9 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                 # Step 2: Serialize model and stream raw bytes directly (bypasses protobuf parsing)
                 model_serialized = serialize_model(model)
 
-                yield from self._stream_raw_bytes(model_serialized, self.max_message_size)
+                yield from self._stream_raw_bytes(
+                    model_serialized, self.max_message_size
+                )
 
                 # Cleanup
                 del model_serialized
@@ -249,7 +253,7 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                 metadata_size = 0
                 for i in range(1, min(len(data_chunks) + 1, 10)):
                     try:
-                        metadata_bytes = b''.join(data_chunks[:i])
+                        metadata_bytes = b"".join(data_chunks[:i])
                         request.ParseFromString(metadata_bytes)
                         metadata_size = len(metadata_bytes)
                         break
@@ -260,7 +264,9 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                     raise Exception("Failed to parse request metadata")
 
                 client_id = request.header.client_id
-                self.logger.info(f"Received UpdateGlobalModel request from client {client_id}")
+                self.logger.info(
+                    f"Received UpdateGlobalModel request from client {client_id}"
+                )
 
                 # Check if local model data follows as raw bytes
                 if request.local_model == b"":
@@ -338,7 +344,7 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                     "grpc",
                     deserialize_model(local_model),
                 )
-                
+
             # Streamed aggregation: chunk metadata is passed through to aggregator
             if self.use_model_chunking and "_chunk_idx" in meta_data:
                 self.logger.info(
@@ -370,7 +376,10 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                     ):  # Only log if there's something meaningful to show
                         # For chunked aggregation, only log for the final chunk
                         if self.use_model_chunking and "_chunk_idx" in meta_data:
-                            if meta_data["_chunk_idx"] == meta_data["_total_chunks"] - 1:
+                            if (
+                                meta_data["_chunk_idx"]
+                                == meta_data["_total_chunks"] - 1
+                            ):
                                 self.logger.info(
                                     f"Received metadata from {request.header.client_id}:\n{pprint.pformat(meta_data_print)}"
                                 )
@@ -396,11 +405,12 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                         if key in meta_data_print:
                             del meta_data_print[key]
                     # For chunked aggregation, only log for the final chunk
-                    if (
-                        meta_data_print
-                    ):
+                    if meta_data_print:
                         if self.use_model_chunking and "_chunk_idx" in meta_data:
-                            if meta_data["_chunk_idx"] == meta_data["_total_chunks"] - 1:
+                            if (
+                                meta_data["_chunk_idx"]
+                                == meta_data["_total_chunks"] - 1
+                            ):
                                 self.logger.info(
                                     f"Received metadata from {request.header.client_id}:\n{pprint.pformat(meta_data_print)}"
                                 )
@@ -465,7 +475,9 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                 del global_model
                 gc.collect()
 
-                yield from self._stream_raw_bytes(global_model_serialized, self.max_message_size)
+                yield from self._stream_raw_bytes(
+                    global_model_serialized, self.max_message_size
+                )
 
                 # Final cleanup
                 del global_model_serialized
@@ -710,4 +722,3 @@ class GRPCServerCommunicator(GRPCCommunicatorServicer):
                 gc.collect()
 
         gc.collect()
-

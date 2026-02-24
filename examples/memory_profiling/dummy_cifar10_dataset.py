@@ -47,6 +47,7 @@ class DummyCIFAR10Dataset(Dataset):
     def __getitem__(self, idx):
         return self.data[idx], self.labels[idx]
 
+
 def get_dummy_cifar10(
     num_clients: int,
     client_id: int,
