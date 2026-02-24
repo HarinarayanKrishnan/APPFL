@@ -1,6 +1,27 @@
 Changelog
 =========
 
+appfl v1.9.0
+------------
+
+New Features
+~~~~~~~~~~~~
+
+- Introduce support for streamed aggregation in gRPC communication, enabling memory-efficient federated learning for large models and datasets. [`Documentation <https://github.com/APPFL/APPFL/tree/main/examples/memory_profiling>`_].
+- Add a new example demonstrating federated learning with Graph Neural Networks (GNNs) using PyTorch Geometric from `@Truc Nguyen <https://github.com/trucndt>`_. [`Documentation <https://github.com/APPFL/APPFL/tree/main/examples/resources/config_gc/pyg>`_].
+- Integrate additional privacy-preserving mechanisms from `@aash-mohammad <https://github.com/aash-mohammad>`_, including: secure aggregation and differential privacy via Octopus-Privacy.
+- Add tutorial notebooks for running APPFL on NERSC systems, available `here <https://github.com/APPFL/APPFL/tree/main/examples/notebook_tutorials/mnist_nersc>`_.
+- Add tutorial notebooks for running APPFL on AI-READI datasets, available `here <https://github.com/APPFL/APPFL/tree/main/examples/notebook_tutorials/aireadi_arvo_course>`_.
+
+
+Bug Fixes
+~~~~~~~~~
+
+- Resolve race conditions in the FedCompass implementation.
+- Fix issues when running FedCompass with Globus Compute.
+- Improve GitHub workflows and CI/CD actions for testing and deployment stability.
+
+
 appfl v1.8.0
 ------------
 
