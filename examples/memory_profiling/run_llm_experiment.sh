@@ -4,6 +4,7 @@
 set -e
 
 NUM_CLIENTS=3
+MODEL_NAME="meta-llama/Llama-3.1-8B"
 
 # Create output directory
 OUTPUT_DIR="./memory_profiles/llm_$(date +%Y%m%d_%H%M%S)"
@@ -32,7 +33,7 @@ run_llm_experiment() {
         --config ./memory_profiling/configs/server_llm_dummy.yaml \
         --output-dir "$OUTPUT_DIR" \
         --num_clients "$NUM_CLIENTS" \
-        --model_name "meta-llama/Llama-3.1-8B" \
+        --model_name "$MODEL_NAME" \
         $VERSION_FLAG &
     SERVER_PID=$!
 
