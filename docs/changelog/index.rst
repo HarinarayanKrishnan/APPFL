@@ -9,7 +9,7 @@ New Features
 
 - Introduce support for streamed aggregation in gRPC communication, enabling memory-efficient federated learning for large models and datasets. [`Documentation <https://github.com/APPFL/APPFL/tree/main/examples/memory_profiling>`_].
 - Add a new example demonstrating federated learning with Graph Neural Networks (GNNs) using PyTorch Geometric from `@Truc Nguyen <https://github.com/trucndt>`_. [`Documentation <https://github.com/APPFL/APPFL/tree/main/examples/resources/config_gc/pyg>`_].
-- Integrate additional privacy-preserving mechanisms from `@aash-mohammad <https://github.com/aash-mohammad>`_, including: secure aggregation and differential privacy via Octopus-Privacy.
+- Integrate additional privacy-preserving mechanisms from `@aash-mohammad <https://github.com/aash-mohammad>`_, including: secure aggregation and differential privacy via Opacus-Privacy.
 - Add tutorial notebooks for running APPFL on NERSC systems, available `here <https://github.com/APPFL/APPFL/tree/main/examples/notebook_tutorials/mnist_nersc>`_.
 - Add tutorial notebooks for running APPFL on AI-READI datasets, available `here <https://github.com/APPFL/APPFL/tree/main/examples/notebook_tutorials/aireadi_arvo_course>`_.
 
